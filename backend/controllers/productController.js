@@ -10,18 +10,17 @@ import path from 'path';
 export const getProducts = asyncHandler(async (req, res) => {
     const { category, subcategory, sort, q, minPrice, maxPrice, brand: brandFilter, inStock } = req.query;
 
-    // Text search
-    if (q) {
-        const products = await Product.find(
-            { $text: { $search: q } },
-            { score: { $meta: 'textScore' } }
-        )
-            .populate('category', 'name slug')
-            .sort({ score: { $meta: 'textScore' } });
-        res.json(products);
-        return;
-    }
     let query = {};
+
+    if (q) {
+        const escaped = String(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const pattern = new RegExp(escaped, 'i');
+        query.$or = [
+            { name: pattern },
+            { description: pattern },
+            { brand: pattern }
+        ];
+    }
     
     // Filter by category
     if (category) {
@@ -63,6 +62,10 @@ export const getProducts = asyncHandler(async (req, res) => {
         productsQuery = productsQuery.sort('-rating');
     } else if (sort === 'newest') {
         productsQuery = productsQuery.sort('-createdAt');
+    } else if (sort === 'name_asc') {
+        productsQuery = productsQuery.sort('name');
+    } else if (sort === 'name_desc') {
+        productsQuery = productsQuery.sort('-name');
     }
     
     const products = await productsQuery;

@@ -65,64 +65,16 @@ const ProductsPage = () => {
     const { data: products = [], isLoading, error } = useQuery({
         queryKey: ['products', searchParams],
         queryFn: async () => {
-            let url = '/api/products';
-            const queryParams = [];
-            
-            if (searchParams.category) {
-                queryParams.push(`category=${searchParams.category}`);
-            }
-            if (searchParams.subcategory) {
-                queryParams.push(`subcategory=${searchParams.subcategory}`);
-            }
-            if (searchParams.sort) {
-                queryParams.push(`sort=${searchParams.sort}`);
-            }
-            
-            if (queryParams.length > 0) {
-                url += `?${queryParams.join('&')}`;
-            }
-            
-            const response = await getProducts();
-            let filteredProducts = response.data;
-            
-            // Apply filters
-            if (searchParams.search) {
-                filteredProducts = filteredProducts.filter(p => 
-                    p.name.toLowerCase().includes(searchParams.search.toLowerCase()) ||
-                    p.description.toLowerCase().includes(searchParams.search.toLowerCase()) ||
-                    p.brand?.toLowerCase().includes(searchParams.search.toLowerCase())
-                );
-            }
-            
-            if (searchParams.minPrice > 0 || searchParams.maxPrice < 1000) {
-                filteredProducts = filteredProducts.filter(p => 
-                    p.price >= searchParams.minPrice && p.price <= searchParams.maxPrice
-                );
-            }
-            
-            if (searchParams.inStock) {
-                filteredProducts = filteredProducts.filter(p => p.countInStock > 0);
-            }
-            
-            // Apply sorting
-            switch (searchParams.sort) {
-                case 'price_asc':
-                    filteredProducts.sort((a, b) => a.price - b.price);
-                    break;
-                case 'price_desc':
-                    filteredProducts.sort((a, b) => b.price - a.price);
-                    break;
-                case 'rating':
-                    filteredProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-                    break;
-                case 'newest':
-                    filteredProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    break;
-                default:
-                    break;
-            }
-            
-            return filteredProducts;
+            const params = {};
+            if (searchParams.category) params.category = searchParams.category;
+            if (searchParams.subcategory) params.subcategory = searchParams.subcategory;
+            if (searchParams.sort) params.sort = searchParams.sort;
+            if (searchParams.search) params.q = searchParams.search;
+            if (searchParams.minPrice > 0) params.minPrice = searchParams.minPrice;
+            if (searchParams.maxPrice < 1000) params.maxPrice = searchParams.maxPrice;
+            if (searchParams.inStock) params.inStock = 'true';
+            const response = await getProducts(params);
+            return response.data;
         }
     });
     

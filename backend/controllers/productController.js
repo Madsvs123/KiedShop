@@ -8,7 +8,7 @@ import path from 'path';
 // @route   GET /api/products
 // @access  Public
 export const getProducts = asyncHandler(async (req, res) => {
-    const { category, subcategory, sort, q, minPrice, maxPrice, brand: brandFilter } = req.query;
+    const { category, subcategory, sort, q, minPrice, maxPrice, brand: brandFilter, inStock } = req.query;
 
     // Text search
     if (q) {
@@ -46,6 +46,10 @@ export const getProducts = asyncHandler(async (req, res) => {
     // Filter by brand
     if (brandFilter) {
         query.brand = { $regex: brandFilter, $options: 'i' };
+    }
+
+    if (inStock === 'true' || inStock === '1') {
+        query.countInStock = { $gt: 0 };
     }
     
     let productsQuery = Product.find(query).populate('category', 'name slug');

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -17,6 +17,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProductById, getRelatedProducts, addToCart } from '../services/api';
 import { useSelector, useDispatch } from 'react-redux';
 import { addToCart as addToCartAction } from '../store/slices/cartSlice';
+import { rememberProduct } from '../utils/recentlyViewed';
 
 const ProductPage = () => {
     const { t, i18n } = useTranslation('pages');
@@ -29,6 +30,7 @@ const ProductPage = () => {
     
     const [quantity, setQuantity] = useState(1);
     const [isAddedToCart, setIsAddedToCart] = useState(false);
+    const [recentProducts, setRecentProducts] = useState([]);
 
     const bgColor = useColorModeValue('white', 'gray.800');
     const infoBg = useColorModeValue('gray.50', 'gray.700');
@@ -42,6 +44,12 @@ const ProductPage = () => {
         },
         enabled: !!id
     });
+
+    useEffect(() => {
+        if (!product?._id) return;
+        const next = rememberProduct(product).filter((item) => item._id !== product._id);
+        setRecentProducts(next);
+    }, [product]);
 
     // Fetch related products
     const { data: relatedProducts = [] } = useQuery({
@@ -427,6 +435,43 @@ const ProductPage = () => {
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
+
+                {recentProducts.length > 0 && (
+                    <Box mb={8}>
+                        <Heading size="lg" mb={6}>Recently viewed</Heading>
+                        <SimpleGrid columns={{ base: 2, sm: 2, md: 3, lg: 4 }} spacing={6}>
+                            {recentProducts.slice(0, 4).map((item) => (
+                                <Box
+                                    key={item._id}
+                                    as={Link}
+                                    to={`/products/${item._id}`}
+                                    bg={useColorModeValue('white', 'gray.800')}
+                                    borderRadius="lg"
+                                    overflow="hidden"
+                                    boxShadow="sm"
+                                    _hover={{ transform: 'translateY(-4px)', shadow: 'lg' }}
+                                    transition="all 0.3s"
+                                >
+                                    <Box bg={useColorModeValue('gray.100', 'gray.700')} p={4} height="160px" display="flex" alignItems="center" justifyContent="center">
+                                        <Image
+                                            src={item.primaryImage || '/images/placeholder.png'}
+                                            alt={item.name}
+                                            objectFit="contain"
+                                            maxHeight="120px"
+                                            fallbackSrc="/images/placeholder.png"
+                                        />
+                                    </Box>
+                                    <Box p={4}>
+                                        <Text fontWeight="bold" noOfLines={1}>{item.name}</Text>
+                                        <Text fontSize="lg" fontWeight="bold" color="teal.500" mt={2}>
+                                            ${Number(item.price || 0).toFixed(2)}
+                                        </Text>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </SimpleGrid>
+                    </Box>
+                )}
 
                 {/* Related Products */}
                 {relatedProducts.length > 0 && (

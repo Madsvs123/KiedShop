@@ -106,6 +106,8 @@
   "sortBy": "ترتيب حسب",
   "newest": "الأحدث",
   "priceLowToHigh": "السعر: من الأقل إلى الأعلى",
+  "nameAsc": "الاسم: من أ إلى ي",
+  "nameDesc": "الاسم: من ي إلى أ",
   "priceHighToLow": "السعر: من الأعلى إلى الأقل",
   "bestSelling": "الأكثر مبيعاً",
   "onSale": "عروض",

@@ -106,6 +106,8 @@
   "sortBy": "Sort by",
   "newest": "Newest",
   "priceLowToHigh": "Price: Low to High",
+  "nameAsc": "Name: A to Z",
+  "nameDesc": "Name: Z to A",
   "priceHighToLow": "Price: High to Low",
   "bestSelling": "Best Selling",
   "onSale": "On Sale",

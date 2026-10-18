@@ -335,6 +335,8 @@ const ProductsPage = () => {
                                         <option value="newest">{t('newest')}</option>
                                         <option value="price_asc">{t('priceLowToHigh')}</option>
                                         <option value="price_desc">{t('priceHighToLow')}</option>
+                                        <option value="name_asc">{t('nameAsc')}</option>
+                                        <option value="name_desc">{t('nameDesc')}</option>
                                         <option value="rating">{t('rating')}</option>
                                     </Select>
                                 </Box>

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box, Flex, Text, Heading, SimpleGrid, Spinner, Alert, AlertIcon,
   useColorModeValue, Button, Icon, VStack, HStack, useToast,
-  Input, Stack
+  Input, Stack, Image
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { getProducts, getCategories } from '../services/api';
@@ -15,10 +15,12 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { getRecentlyViewed } from '../utils/recentlyViewed';
 
 const HomePage = () => {
   const { t } = useTranslation('home');
   const [email, setEmail] = useState('');
+  const [recentProducts, setRecentProducts] = useState([]);
   const toast = useToast();
   const cardBg = useColorModeValue('white', 'gray.800');
   const sectionBg = useColorModeValue('gray.50', 'gray.900');
@@ -34,6 +36,10 @@ const HomePage = () => {
     queryKey: ['categories'],
     queryFn: async () => { const r = await getCategories(); return r.data; },
   });
+
+  useEffect(() => {
+    setRecentProducts(getRecentlyViewed());
+  }, []);
 
   const isLoading = productsLoading || categoriesLoading;
   const hasError = productsError || categoriesError;
@@ -165,6 +171,43 @@ const HomePage = () => {
               ))}
             </Swiper>
           </Box>
+        </Box>
+      )}
+
+      {recentProducts.length > 0 && (
+        <Box maxW="1200px" mx="auto" px={4} pb={4}>
+          <Heading size="lg" mb={6}>{t('recentlyViewed')}</Heading>
+          <SimpleGrid columns={{ base: 2, sm: 2, md: 3, lg: 4 }} spacing={6}>
+            {recentProducts.slice(0, 4).map((item) => (
+              <Box
+                key={item._id}
+                as={Link}
+                to={`/products/${item._id}`}
+                bg={cardBg}
+                borderRadius="lg"
+                overflow="hidden"
+                boxShadow="sm"
+                _hover={{ transform: 'translateY(-4px)', shadow: 'lg' }}
+                transition="all 0.3s"
+              >
+                <Box bg={sectionBg} p={4} height="160px" display="flex" alignItems="center" justifyContent="center">
+                  <Image
+                    src={item.primaryImage || '/images/placeholder.png'}
+                    alt={item.name}
+                    objectFit="contain"
+                    maxHeight="120px"
+                    fallbackSrc="/images/placeholder.png"
+                  />
+                </Box>
+                <Box p={4}>
+                  <Text fontWeight="bold" noOfLines={1}>{item.name}</Text>
+                  <Text fontSize="lg" fontWeight="bold" color="teal.500" mt={2}>
+                    ${Number(item.price || 0).toFixed(2)}
+                  </Text>
+                </Box>
+              </Box>
+            ))}
+          </SimpleGrid>
         </Box>
       )}
 

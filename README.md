@@ -4,6 +4,8 @@ KaiedShop is a bilingual online store for medical equipment, books, and supplies
 
 The shop is available in English and Arabic. Arabic uses a right-to-left layout, and the language can follow the visitor’s country.
 
+Shoppers can filter the catalog by price, brand, and stock, and sort by name. Products they open are kept in the browser as a recently viewed list on the home page and product page.
+
 ## Intended users
 
 - **Shoppers** who want to search products, check out, and track orders.

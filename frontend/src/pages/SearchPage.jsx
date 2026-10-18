@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import {
     Box, Heading, Text, SimpleGrid, Spinner, Alert, AlertIcon,
     useColorModeValue, Input, Select, Flex, Slider, SliderTrack,
-    SliderFilledTrack, SliderThumb, HStack, Button, Collapse,
+    SliderFilledTrack, SliderThumb, HStack, Button, Collapse, Checkbox,
     Icon, VStack, RangeSlider, RangeSliderTrack, RangeSliderFilledTrack,
     RangeSliderThumb, Tag, TagLabel, TagCloseButton, IconButton, Divider
 } from '@chakra-ui/react';
@@ -22,13 +22,14 @@ const SearchPage = () => {
     const [category, setCategory] = useState('');
     const [brand, setBrand] = useState('');
     const [priceRange, setPriceRange] = useState([0, 1000]);
+    const [inStock, setInStock] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
 
     const bg = useColorModeValue('gray.50', 'gray.900');
     const cardBg = useColorModeValue('white', 'gray.800');
 
     const { data: products, isLoading } = useQuery({
-        queryKey: ['search', query, sort, category, brand, priceRange],
+        queryKey: ['search', query, sort, category, brand, priceRange, inStock],
         queryFn: async () => {
             const params = {};
             if (query) params.q = query;
@@ -37,6 +38,7 @@ const SearchPage = () => {
             if (brand) params.brand = brand;
             if (priceRange[0] > 0) params.minPrice = priceRange[0];
             if (priceRange[1] < 1000) params.maxPrice = priceRange[1];
+            if (inStock) params.inStock = 'true';
             const res = await getProducts(params);
             return res.data;
         }
@@ -63,9 +65,10 @@ const SearchPage = () => {
         setCategory('');
         setBrand('');
         setPriceRange([0, 1000]);
+        setInStock(false);
     };
 
-    const hasActiveFilters = sort || category || brand || priceRange[0] > 0 || priceRange[1] < 1000;
+    const hasActiveFilters = sort || category || brand || inStock || priceRange[0] > 0 || priceRange[1] < 1000;
 
     const results = useMemo(() => products || [], [products]);
 
@@ -99,6 +102,8 @@ const SearchPage = () => {
                             <Tag colorScheme="green"><TagLabel>${priceRange[0]}–${priceRange[1]}</TagLabel>
                                 <TagCloseButton onClick={() => setPriceRange([0, 1000])} /></Tag>
                         )}
+                        {inStock && <Tag colorScheme="orange"><TagLabel>In stock</TagLabel>
+                            <TagCloseButton onClick={() => setInStock(false)} /></Tag>}
                         {sort && <Tag colorScheme="purple"><TagLabel>Sort: {sort}</TagLabel>
                             <TagCloseButton onClick={() => setSort('')} /></Tag>}
                         <Button size="xs" variant="ghost" onClick={clearFilters}>Clear all</Button>
@@ -149,11 +154,17 @@ const SearchPage = () => {
                                     </RangeSlider>
                                 </Box>
 
+                                <Checkbox isChecked={inStock} onChange={(e) => setInStock(e.target.checked)} colorScheme="teal">
+                                    In stock only
+                                </Checkbox>
+
                                 <Box>
                                     <Text fontSize="sm" fontWeight="semibold" mb={2}>Sort By</Text>
                                     <Select value={sort} onChange={(e) => setSort(e.target.value)} size="sm" placeholder="Relevance">
                                         <option value="price_asc">Price: Low to High</option>
                                         <option value="price_desc">Price: High to Low</option>
+                                        <option value="name_asc">Name: A to Z</option>
+                                        <option value="name_desc">Name: Z to A</option>
                                         <option value="rating">Highest Rated</option>
                                         <option value="newest">Newest</option>
                                     </Select>

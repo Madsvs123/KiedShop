@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Frontend build output
+frontend/dist/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Uploaded files
+backend/uploads/
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

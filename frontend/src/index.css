@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Pulse animation for typing indicators */
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+}
+
+/* Smooth scrollbar for chat containers */
+.chat-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb {
+    background: #CBD5E0;
+    border-radius: 999px;
+}
+.chat-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* RTL support — applied via .rtl class on <html> */
+html.rtl {
+    direction: rtl;
+}
+
+html.rtl body {
+    font-family: 'Cairo', 'Noto Naskh Arabic', 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+    text-align: right;
+}
+
+/* Fix icon spacing in buttons — both LTR and RTL */
+.chakra-button .chakra-button__icon:first-child {
+    margin-inline-end: 0.4rem !important;
+}
+
+/* Fix Chakra UI icon ordering for RTL buttons */
+html.rtl .chakra-button .chakra-button__icon:first-child {
+    margin-inline-end: 0 !important;
+    margin-inline-start: 0.5rem !important;
+}
+
+/* Admin sidebar nav icon spacing */
+html.rtl .chakra-stack .chakra-button__icon {
+    margin-inline-end: 0 !important;
+    margin-inline-start: 0.4rem !important;
+}
+
+/* Fix input groups */
+html.rtl .chakra-input__left-element {
+    left: auto !important;
+    right: 0 !important;
+}
+
+html.rtl .chakra-input__right-element {
+    right: auto !important;
+    left: 0 !important;
+}
+
+html.rtl .chakra-input {
+    text-align: right;
+    padding-inline-start: 2.5rem;
+}
+
+html.rtl .chakra-select__wrapper {
+    direction: rtl;
+}
+
+/* Fix menu positioning in RTL */
+html.rtl .chakra-menu__menu-list {
+    right: 0;
+    left: auto !important;
+}
+
+/* Swiper fixes for RTL */
+html.rtl .swiper {
+    direction: ltr;
+}
+
+/* Override Chakra Stack row direction in RTL */
+html.rtl [data-direction="row"] {
+    flex-direction: row-reverse;
+}
+
+/* Admin sidebar RTL fixes */
+html.rtl .chakra-breadcrumb__list {
+    flex-direction: row-reverse;
+}
+
+html.rtl .chakra-breadcrumb__list-item + .chakra-breadcrumb__list-item::before {
+    content: "/" !important;
+}
+
+/* Notification badge position fix for RTL */
+html.rtl .chakra-menu__menu-button [class*="badge"] {
+    right: auto !important;
+    left: -4px !important;
+}
+
+/* Fix admin sidebar icon-text gap */
+html.ltr .css-1n3b2ze .chakra-icon + .chakra-text {
+    margin-left: 12px !important;
+}
+
+/* General icon gap fix for admin sidebar */
+html.ltr aside nav a svg + *,
+html.ltr aside nav a .chakra-icon + * {
+    margin-left: 10px !important;
+}
+html.rtl aside nav a svg + *,
+html.rtl aside nav a .chakra-icon + * {
+    margin-right: 10px !important;
+}
